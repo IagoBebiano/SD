@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Googol-Página de administração</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(to bottom, #4CAF50, #45a049);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column; /* Set flex-direction to column */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px; /* Add margin-bottom for spacing between containers */
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .search-form input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .search-form button[type="submit"] {
+            background-color: #45a049;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-form button[type="submit"]:hover {
+            background-color: #4CAF50;
+        }
+
+        .search-form input[type="text"]::placeholder {
+            color: #999;
+        }
+
+        .link {
+            color: #333;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h1>Googol - Página de administração</h1>
+
+<div class="container">
+    <h1>Top 10 pesquisas</h1>
+
+</div>
+<div id="main-content" class="container">
+    <div class="row">
+<!--        Exercise 3.-->
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="connect">WebSocket connection:</label>
+                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="message">Username:</label>
+                    <input type="text" id="username" class="form-control" placeholder="username">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <input type="text" id="message" class="form-control" placeholder="Write a message here...">
+                </div>
+                <button id="send" class="btn btn-default" type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Messages</th>
+                </tr>
+                </thead>
+                <tbody id="messages">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container">
+    <p class="link">Acede à <a href="http://localhost:8080/index">página de indexação</a></p>
+    <p class="link">Acede à <a href="http://localhost:8080/search">página de pesquisa</a></p>
+</div>
+
+<script>
+    let stompClient = null;
+
+function setConnected(connected) {
+  $("#connect").prop("disabled", connected);
+  $("#disconnect").prop("disabled", !connected);
+  if (connected) {
+    $("#conversation").show();
+  } else {
+    $("#conversation").hide();
+  }
+  $("#messages").html("");
+}
+
+function connect() {
+  const socket = new SockJS('/my-websocket');
+  stompClient = Stomp.over(socket);
+  stompClient.connect({}, (frame) => {
+    setConnected(true);
+    console.log('Connected:', frame);
+    stompClient.subscribe('/topic/messages', (message) => {
+      showMessage(JSON.parse(message.body).content);
+    });
+  });
+}
+
+function disconnect() {
+  if (stompClient !== null) {
+    stompClient.disconnect();
+  }
+  setConnected(false);
+  console.log("Disconnected");
+}
+
+function sendMessage() {
+  stompClient.send("/app/message", {}, JSON.stringify({'content': $("#message").val(), 'username':$("#username").val()}));
+}
+
+function showMessage(message) {
+  $("#messages").append("<tr><td>" + message + "</td></tr>");
+}
+
+$(function () {
+  $("form").on('submit', (e) => {
+    e.preventDefault();
+  });
+  // Exercise 3.
+  $("#connect").click(() => {
+    connect();
+  });
+  $("#disconnect").click(() => {
+    disconnect();
+  });
+  $("#send").click(() => {
+    sendMessage();
+  });
+});
+
+/*$(document).ready(function(){
+    connect();
+});*/
+
+/*document.addEventListener('DOMContentLoaded', function() {
+   connect();
+}, false);*/
+
+/*$(window).unload(function(){
+  disconnect();
+});*/
+
+// Exercise 3.
+/*
+window.onload = connect;
+window.onbeforeunload = disconnect;
+*/
+
+</script>
+</script>
+
+</body>
+</html>

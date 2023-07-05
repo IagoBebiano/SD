@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL Submission</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: linear-gradient(to bottom, #FFFFFF, #E8F0FE);
+      margin: 0;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-top: 0;
+    }
+    
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .submission-form {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+    
+    .submission-form input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+      font-size: 16px;
+    }
+    
+    .submission-form button[type="submit"] {
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    
+    .submission-form button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    
+    .submission-form input[type="text"]::placeholder {
+      color: #999;
+    }
+    
+    .link {
+      color: #333;
+      text-decoration: none;
+      text-align: center;
+      display: block;
+      margin-top: 10px;
+    }
+    
+    .link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Googol</h1>
+  <p>Acede à <a class="link" href="http://localhost:8080/search">página de pesquisa</a>.</p>
+  <form class="submission-form" th:action="@{/index}" method="post">
+    <input type="text" name="url" placeholder="Enter the URL" required>
+    <button type="submit">Submit</button>
+  </form>
+</div>
+</body>
+</html>

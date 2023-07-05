@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: linear-gradient(to bottom, #FFFFFF, #E8F0FE);
+      margin: 0;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-top: 0;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .search-form {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    .search-form input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+    }
+    
+    .search-form button[type="submit"] {
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin-left: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .search-form button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    
+    .search-form input[type="text"]::placeholder {
+      color: #999;
+    }
+    
+    .search-form input[type="text"]:focus {
+      border-color: #4CAF50;
+    }
+    
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    li {
+      margin-bottom: 20px;
+    }
+    
+    h3 {
+      color: #333;
+      margin-top: 0;
+    }
+    
+    p {
+      color: #666;
+      margin-top: 0;
+    }
+    
+    a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    .pagination {
+      text-align: center;
+    }
+    
+    .pagination a {
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 0 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      text-decoration: none;
+      color: #333;
+    }
+    
+    .pagination a.active {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Search Results</h1>
+  
+  <ul th:if="${#lists.isEmpty(searchResults)}" class="search-results">
+    <form class="search-form" th:action="@{/search}" method="post">
+      <input type="text" name="query" placeholder="Enter your search query" required>
+      <button type="submit">Search</button>
+    </form>
+    <li>No results were found.</li>
+  </ul>
+  
+  <ul th:unless="${#lists.isEmpty(searchResults)}" class="search-results">
+    <form class="search-form" th:action="@{/search}" method="post">
+      <input type="text" name="query" placeholder="Enter your search query" required>
+      <button type="submit">Search</button>
+    </form>
+    <li th:each="result : ${searchResults}">
+      <h3 th:text="${result.getTitle()}"></h3>
+      <p th:text="${result.getCitation()}"></p>
+      <a th:href="${result.getUrl()}" th:text="${result.getUrl()}"></a>
+    </li>
+    <li th:each="aux : ${searchResults2}">
+      <h3 th:text="${aux.getTitle()}"></h3>
+      <p th:text="${aux.getCitation()}"></p>
+      <a th:href="${aux.getUrl()}" th:text="${aux.getUrl()}"></a>
+    </li>
+  </ul>
+  
+  <div class="pagination"></div>
+  
+  <p>Acesse a <a href="http://localhost:8080/index">página de indexação</a> se quiser introduzir um novo link.</p> 
+  <p>Acede à <a class="link" href="http://localhost:8080/search">página de pesquisa inicial</a>.</p>
+</div>
+
+<script>
+  const resultsPerPage = 10;
+  const resultItems = document.querySelectorAll('.result-item');
+  const paginationContainer = document.querySelector('.pagination');
+  const totalResults = resultItems.length;
+  const totalPages = Math.ceil(totalResults / resultsPerPage);
+  
+  function showPage(pageNumber) {
+    const startIndex = (pageNumber - 1) * resultsPerPage;
+    const endIndex = pageNumber * resultsPerPage;
+    
+    for (let i = 0; i < resultItems.length; i++) {
+      if (i >= startIndex && i < endIndex) {
+        resultItems[i].style.display = 'block';
+      } else {
+        resultItems[i].style.display = 'none';
+      }
+    }
+    
+    updatePagination(pageNumber);
+  }
+  
+  function updatePagination(currentPage) {
+    paginationContainer.innerHTML = '';
+    
+    for (let i = 1; i <= totalPages; i++) {
+      const link = document.createElement('a');
+      link.href = '#';
+      link.textContent = i;
+      
+      if (i === currentPage) {
+        link.classList.add('active');
+      }
+      
+      link.addEventListener('click', function() {
+        showPage(i);
+      });
+      
+      paginationContainer.appendChild(link);
+    }
+  }
+  
+  showPage(1);
+</script>
+
+</body>
+</html>
+
